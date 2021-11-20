@@ -1,4 +1,4 @@
-import React from 'react'
+import React ,{useEffect} from 'react'
 import {
     StyleSheet,
     Image,
@@ -29,6 +29,7 @@ const Home = ({ navigation }) => {
         }
     }
 
+    
     return (
 
         <View style={styles.container}>
