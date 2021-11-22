@@ -2,7 +2,8 @@
   package="com.splashexample">
 
     <uses-permission android:name="android.permission.INTERNET" />
-
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <application
       android:name=".MainApplication"
       android:label="@string/app_name"
@@ -10,6 +11,7 @@
       android:roundIcon="@mipmap/ic_launcher_round"
       android:allowBackup="false"
       android:theme="@style/AppTheme">
+      <meta-data android:name="com.facebook.sdk.ApplicationId" android:value="@string/facebook_app_id"/>
       <activity
         android:name=".SplashActivity"
         android:theme="@style/SplashTheme"
@@ -28,5 +30,9 @@
         android:windowSoftInputMode="adjustResize"
         android:exported="true">
       </activity>
+
+       <meta-data
+     android:name="com.google.android.geo.API_KEY"
+     android:value="AIzaSyDh-cacu21-PhXMBXHrU1guauNDUROKux4"/>
     </application>
 </manifest>

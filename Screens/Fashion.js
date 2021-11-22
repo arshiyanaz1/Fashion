@@ -11,15 +11,14 @@ import {
     Button,
     ImageBackground,
     TouchableOpacity,
-    ScrollView
-
+    ScrollView,
+    SafeAreaView
 } from 'react-native';
 import axios from 'axios';
 import { Dimensions } from 'react-native'
 import Icon from 'react-native-vector-icons/FontAwesome';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import { NavigationContainer } from '@react-navigation/native';
-
+import { uuid } from 'uuidv4';
 
 
 const Fashion = ({navigation}) => {
@@ -37,10 +36,9 @@ const Fashion = ({navigation}) => {
         axios
             .get(`https://randomuser.me/api/?page=${currentPage}&results=10`)
             .then(res => {
-                //setUsers(res.data.results);
                 setUsers([...users, ...res.data.results]);
                 setIsLoading(false);
-                console.log(res)
+              /*   console.log(res) */
             });
     };
 

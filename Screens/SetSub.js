@@ -49,15 +49,19 @@ const SetSub = ({ navigation }) => {
         setCurrentPage(currentPage + 1);
     };
 
+    const getItem = (item) =>{
+        console.log('item',item)
+    }
+
     useEffect(() => {
         getUsers();
     }, [currentPage]);
 
     const renderItem = ({ item }) => {
         return (
-            <View style={styles.itemWrapperStyle}>
-                <View style={styles.imageCont}>
-                    <Image
+            <TouchableOpacity style={styles.itemWrapperStyle} onPress={()=>{getItem(item), navigation.navigate('Item',{item})}}>
+                <View>
+                    <Image 
                         style={styles.itemImageStyle}
                         source={{ uri: item.picture.large }}
                     />
@@ -67,20 +71,20 @@ const SetSub = ({ navigation }) => {
 
                 <View style={[styles.contentWrapperStyle], { flexDirection: 'row', paddingTop: 10 }}>
 
-                    <View style={styles.LogoTextCont}>
+                    <View style={styles.LogoTextCont} >
                         <Text style={{
                             color: '#43675f',
                             fontFamily: 'Helvetica',
                             fontWeight: 'bold'
-                        }}>Lacoste Shoes</Text>
+                        }}>{`${item.name.first}`} {`${item.name.last}`}</Text>
                         <View style={styles.priceCont}>
-                            <Text style={styles.green} >{`${item.dob.age}`} AED</Text>
-                            <Text style={styles.priceMark}>72</Text>
+                            <Text style={styles.green} >{`${item.registered.age}`} AED</Text>
+                            <Text style={styles.priceMark}>{`${item.dob.age}`}</Text>
                             <Text style={styles.offerBtn}>{`${item.dob.age}`} Off</Text>
                         </View>
                     </View>
                 </View>
-            </View>
+            </TouchableOpacity>
 
 
         );

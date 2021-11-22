@@ -5,7 +5,7 @@ import {
     View,
     Text,
     Button,
-    TouchableOpacity
+    TouchableOpacity 
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
@@ -50,12 +50,8 @@ const Home = ({ navigation }) => {
                 <Button
                     title="Skip"
                     type="clear"
-                    onPress={() => navigation.navigate('Fashion')}
+                    onPress={() => navigation.navigate('HomeStack')}
                 />
-
-
-
-
         </View>
     )
 }
