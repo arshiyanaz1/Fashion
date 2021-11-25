@@ -44,81 +44,104 @@ const itemDetails = ({ route, navigation }) => {
             position => {
                 const { latitude, longitude } = position.coords
                 setLocation({ latitude, longitude })
+                console.log('position', position)
             },
             error => {
                 console.log(error.code, error.message)
             },
             { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
-            
+
         )
-        if(location){
-            console.log('location',location)
+        if (location) {
+            console.log('location', location)
         }
     }, [])
 
     return (
-        /*  <ScrollView style={{flex:1,height:'100%'}}> */
-        <ScrollView style={{ flex: 1, height: '100%', }}>
-            <View >
-                <Image
-                    style={{ width: '100%', height: 210 }}
-                    source={{ uri: item.picture.large }}>
-                </Image>
-                <View style={styles.price}>
-                    <Text style={styles.priceMark} >
-                        {item.dob.age}
-                    </Text>
-                    <Text style={{ color: 'white' }}>
-                        {item.registered.age} AED
-                    </Text>
-                </View>
-            </View>
-
-            <View style={{ padding: 5 }}>
-                <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingBottom: 10 }}>
-                    <Text style={{ fontSize: 18, fontWeight: 'bold' }}>
-                        {item.name.first}
-                    </Text>
-                    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 5 }}>
-                        <AntDesign name="sharealt" type="AntDesign" size={20} style={styles.icon} />
-                        <AntDesign name="hearto" type="AntDesign" size={20} style={styles.icon} />
-                        <AntDesign name="warning" type="AntDesign" size={20} />
+        <>
+            <ScrollView style={{ flex: 1, height: '100%', }}>
+                <View >
+                    <Image
+                        style={{ width: '100%', height: 210 }}
+                        source={{ uri: item.picture.large }}>
+                    </Image>
+                    <View style={styles.price}>
+                        <Text style={styles.priceMark} >
+                            {item.dob.age}
+                        </Text>
+                        <Text style={{ color: 'white' }}>
+                            {item.registered.age} AED
+                        </Text>
                     </View>
                 </View>
-                <View style={{ flexDirection: 'row', alignItems: 'center', paddingBottom: 10 }}>
-                    <Text style={{ paddingRight: 5, fontSize: 15, color: 'gray' }}>{item.name.first}</Text>
-                    <Text style={{ fontSize: 15, color: 'gray' }}>{item.name.last}</Text>
+
+                <View style={{ padding: 5 }}>
+                    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingBottom: 10 }}>
+                        <Text style={{ fontSize: 18, fontWeight: 'bold' }}>
+                            {item.name.first}
+                        </Text>
+                        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 5 }}>
+                            <AntDesign name="sharealt" type="AntDesign" size={20} style={styles.icon} />
+                            <AntDesign name="hearto" type="AntDesign" size={20} style={styles.icon} />
+                            <AntDesign name="warning" type="AntDesign" size={20} />
+                        </View>
+                    </View>
+                    <View style={{ flexDirection: 'row', alignItems: 'center', paddingBottom: 10 }}>
+                        <Text style={{ paddingRight: 5, fontSize: 15, color: 'gray' }}>{item.name.first}</Text>
+                        <Text style={{ fontSize: 15, color: 'gray' }}>{item.name.last}</Text>
+                    </View>
+                    <TouchableOpacity style={{ backgroundColor: '#e7f3ff', marginHorizontal: 5, paddingHorizontal: 5 }}>
+                        <Text style={{ color: '#e7a79d', paddingVertical: 10, fontWeight: 'bold', letterSpacing: 0.4 }}>{item.dob.age}% OFFER</Text>
+                    </TouchableOpacity>
                 </View>
-                <TouchableOpacity style={{ backgroundColor: '#e7f3ff', marginHorizontal: 5, paddingHorizontal: 5 }}>
-                    <Text style={{ color: '#e7a79d', paddingVertical: 10, fontWeight: 'bold', letterSpacing: 0.4 }}>{item.dob.age}% OFFER</Text>
+
+                <View style={{ width: '100%', marginTop: 10 }}>
+                    <Image resizeMode={'cover'}
+                        style={{ width: '100%', height: 110 }}
+                        source={require('../assets/img/finalSale.jpg')}>
+                    </Image>
+                </View>
+
+                <View style={{ flex: 1, borderRadius: 8, borderWidth: 1, margin: 10, }}>
+                    {location && (
+                        <MapView
+                            style={{ borderRadius: 15, overflow: 'hidden', borderWidth: 1, height: 250 }}
+                            provider={PROVIDER_GOOGLE}
+                            customMapStyle={mapStyle}
+                            initialRegion={{
+                                latitude: location.latitude,
+                                longitude: location.longitude,
+                                latitudeDelta: 0.0922,
+                                longitudeDelta: 0.0421,
+                            }}
+                            showsUserLocation={true}
+                        />
+                    )}
+
+                </View>
+
+
+
+            </ScrollView>
+
+
+            <View style={{flexDirection:'row',width:'100%',paddingHorizontal:10,alignItems:'center',justifyContent:'space-between',borderTopWidth:1,borderTopColor:'gray'}}>
+                <View style={{
+                    height: 50,width:'40%',
+                    flexDirection:'row',alignItems:'center',justifyContent:'space-evenly',}}>
+                    <TouchableOpacity >
+                        <AntDesign name="minus" type="AntDesign" size={15} style={styles.icon} />
+                    </TouchableOpacity>
+                    <Text>1</Text>
+                    <TouchableOpacity>
+                        <AntDesign name="plus" type="AntDesign" size={15} style={styles.icon} />
+                    </TouchableOpacity>
+                </View>
+                <TouchableOpacity style={{width:'100%',backgroundColor:'#e7f3ff',padding:10,borderRadius:5}}>
+                    <Text style={{alignSelf:'flex-start',color:'#2966bd',fontWeight:'bold',fontSize:16}}>Start add items to cart</Text>
                 </TouchableOpacity>
             </View>
-
-            <View style={{ width: '100%', marginTop: 10 }}>
-                <Image resizeMode={'cover'}
-                    style={{ width: '100%', height: 110 }}
-                    source={require('../assets/img/finalSale.jpg')}>
-                </Image>
-            </View>
-
-            <View style={{ flex: 1, borderRadius: 8, borderWidth: 1, margin: 10, }}>
-                {location && (
-                    <MapView
-                        style={{ borderRadius: 15,overflow: 'hidden', borderWidth: 1, height: 250 }}
-                        provider={PROVIDER_GOOGLE}
-                        customMapStyle={mapStyle}
-                        initialRegion={{
-                            latitude: location.latitude,
-                            longitude: location.longitude,
-                            latitudeDelta: 0.0922,
-                            longitudeDelta: 0.0421,
-                        }}
-                        showsUserLocation={true}
-                    />
-                )}
-
-            </View>
-        </ScrollView>
+        </>
     )
 }
 const styles = StyleSheet.create({
@@ -145,7 +168,7 @@ const styles = StyleSheet.create({
         color: 'white'
     },
     icon: {
-        paddingRight: 20
+       /*  paddingRight: 20 */
     }
 })
 export default itemDetails

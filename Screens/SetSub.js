@@ -92,7 +92,7 @@ const SetSub = ({ navigation }) => {
 
 
     return (
-        <ScrollView>
+        <View>
             <View style={styles.Container}>
                 <Image resizeMode={'cover'}
                     style={{ width: '100%', height: 110 }}
@@ -112,7 +112,7 @@ const SetSub = ({ navigation }) => {
                 onEndReachedThreshold={0}
                 numColumns={2}
             />
-        </ScrollView>
+        </View>
     )
 }
 

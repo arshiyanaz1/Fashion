@@ -11,7 +11,7 @@ export  const API = [{
 },{
     id:0,
     'name':'Abu Dhabi'
-},{
+},{ 
     id:0,
     'name':'Ras Al Khaima'
 },{

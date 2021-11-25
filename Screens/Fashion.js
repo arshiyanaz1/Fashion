@@ -12,24 +12,26 @@ import {
     ImageBackground,
     TouchableOpacity,
     ScrollView,
-    SafeAreaView
+    Alert
 } from 'react-native';
 import axios from 'axios';
 import { Dimensions } from 'react-native'
 import Icon from 'react-native-vector-icons/FontAwesome';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import { uuid } from 'uuidv4';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import firebase from 'react-native-firebase';
+import { connect } from 'react-redux';
 
 
-const Fashion = ({navigation}) => {
+
+const Fashion = ({ navigation }) => {
     const [users, setUsers] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [isLoading, setIsLoading] = useState(false);
+    const [country, setCountry] = useState('');
+    const [product, setProduct] = useState([]);
 
 
-    const dimensions = Dimensions.get('window');
-    const imageHeight = Math.round(dimensions.width * 9 / 16);
-    const imageWidth = dimensions.width;
 
     const getUsers = () => {
         setIsLoading(true);
@@ -38,8 +40,28 @@ const Fashion = ({navigation}) => {
             .then(res => {
                 setUsers([...users, ...res.data.results]);
                 setIsLoading(false);
-              /*   console.log(res) */
+                /* console.log(res) */
             });
+    };
+
+    const selectItem = (item) => {
+        setProduct([...product,item])
+        /*   Alert.alert('hh') */
+
+        console.log('selected item', product)
+
+    }
+    _retrieveData = async () => {
+        try {
+            const value = await AsyncStorage.getItem('selectedCountry');
+            if (value !== null) {
+                // We have data!!
+                setCountry(JSON.parse(value))
+
+            }
+        } catch (error) {
+            // Error retrieving data
+        }
     };
 
     const renderItem = ({ item }) => {
@@ -76,19 +98,19 @@ const Fashion = ({navigation}) => {
         return (
             <View style={styles.item}>
                 <View style={styles.imageCont} >
-                    <Image
-                        style={{
-                            width: 200,
-                            borderRadius: 10,
-                            height: 130,
-                        }}
-                        source={{ uri: item.picture.large }}
-                    />
-
+                    <TouchableHighlight onPress={() => { navigation.navigate('Item', { item }) }}>
+                        <Image
+                            style={{
+                                width: 200,
+                                borderRadius: 10,
+                                height: 130,
+                            }}
+                            source={{ uri: item.picture.large }}
+                        />
+                    </TouchableHighlight>
                     <AntDesign name="hearto" type="AntDesign" size={20} style={styles.heart} />
-                    <TouchableHighlight style={styles.plus} >
+                    <TouchableHighlight style={styles.plus} onPress={() => selectItem(item)}>
                         <AntDesign name="plus" size={20} color="#fff" style={{ paddingTop: 4, paddingLeft: 5 }} />
-
                     </TouchableHighlight>
                 </View>
 
@@ -100,7 +122,7 @@ const Fashion = ({navigation}) => {
                             color: '#43675f',
                             fontFamily: 'Helvetica',
                             fontWeight: 'bold'
-                        }}>Lacoste Shoes</Text>
+                        }}>{` ${item.name.first} ${item.name.last}`}</Text>
                         <View style={styles.priceCont}>
                             <Text style={styles.green} >{`${item.dob.age}`} AED</Text>
                             <Text style={styles.priceMark}>72</Text>
@@ -118,14 +140,16 @@ const Fashion = ({navigation}) => {
         return (
             <View style={styles.item}>
                 <View style={styles.imageCont} >
-                    <Image
-                        style={{
-                            width: 300,
-                            borderRadius: 10,
-                            height: 200,
-                        }}
-                        source={{ uri: item.picture.large }}
-                    />
+                    <TouchableHighlight onPress={() => { navigation.navigate('Item', { item }) }}>
+                        <Image
+                            style={{
+                                width: 300,
+                                borderRadius: 10,
+                                height: 200,
+                            }}
+                            source={{ uri: item.picture.large }}
+                        />
+                    </TouchableHighlight>
                     <View style={{
                         flexDirection: 'row',
                         alignItems: 'center',
@@ -133,9 +157,9 @@ const Fashion = ({navigation}) => {
                         bottom: 30,
                         left: 10,
                     }}>
-                    <Text
-                        style={{color:'white'}
-                        }>{`${item.name.title} ${item.name.first} ${item.name.last}`}</Text>
+                        <Text
+                            style={{ color: 'white' }
+                            }>{`${item.name.title} ${item.name.first} ${item.name.last}`}</Text>
                     </View>
                     <View style={{
                         flexDirection: 'row',
@@ -143,7 +167,7 @@ const Fashion = ({navigation}) => {
                         justifyContent: 'space-between', position: "absolute",
                         bottom: 10,
                         left: 10,
-                        
+
                     }}>
                         <Text style={{ color: 'white' }} >{`${item.dob.age}`}</Text>
                         <Text style={{
@@ -151,7 +175,7 @@ const Fashion = ({navigation}) => {
                             textDecorationColor: '#fff',
                             textDecorationStyle: 'solid',
                             paddingHorizontal: 15,
-                            color:'#fff'
+                            color: '#fff'
                         }}>72</Text>
                     </View>
                     <TouchableOpacity style={{
@@ -184,11 +208,12 @@ const Fashion = ({navigation}) => {
         return (
             <View style={styles.item}>
                 <View style={styles.imageCont} >
-                    <Image
-                        style={styles.itemPhoto}
-                        source={{ uri: item.picture.large }}
-                    />
-
+                    <TouchableHighlight onPress={()=>{navigation.navigate('Item',{item})}}>
+                        <Image
+                            style={styles.itemPhoto}
+                            source={{ uri: item.picture.large }}
+                        />
+                    </TouchableHighlight>
                     <Icon name="heart" size={25} color="red" style={styles.heart} />
                     <TouchableHighlight style={styles.plus} >
                         <AntDesign name="plus" size={25} color="#fff" style={styles.icon} />
@@ -252,7 +277,7 @@ const Fashion = ({navigation}) => {
     };
 
 
-
+  
     const renderLoader = () => {
         return isLoading ? (
             <View style={styles.loaderStyle}>
@@ -267,19 +292,21 @@ const Fashion = ({navigation}) => {
 
     useEffect(() => {
         getUsers();
+        _retrieveData()
+       // selectItem();
     }, [currentPage]);
 
     return (
         <ScrollView>
             <StatusBar backgroundColor="#000" />
 
-            <View style={{flexDirection:'row',justifyContent:'space-between'}}>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                 <Text style={{ padding: 15, color: '#bebebe', fontWeight: 'bold' }}>Shoes</Text>
-                <TouchableOpacity onPress={()=>{navigation.navigate('Sets')}}>
+                <TouchableOpacity onPress={() => { navigation.navigate('Sets') }}>
                     <Text style={{ padding: 15, color: '#657eaf', fontWeight: 'bold' }}>See All</Text>
                 </TouchableOpacity>
             </View>
-         
+
 
             <View>
                 <FlatList
@@ -287,7 +314,7 @@ const Fashion = ({navigation}) => {
                     data={users}
                     renderItem={renderItemHorShoes}
                     keyExtractor={(item, index) => {
-                        index;
+                        Math.random().toString(36).substr(2, 8);
                     }}
                     ListFooterComponent={renderLoader}
                     onEndReached={loadMoreItem}
@@ -296,7 +323,7 @@ const Fashion = ({navigation}) => {
                 />
             </View>
 
-            <View style={{flexDirection:'row',justifyContent:'space-between'}}>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                 <Text style={{ padding: 15, color: '#bebebe', fontWeight: 'bold' }}>Offers</Text>
                 <TouchableOpacity>
                     <Text style={{ padding: 15, color: '#657eaf', fontWeight: 'bold' }}>See All</Text>
@@ -309,7 +336,7 @@ const Fashion = ({navigation}) => {
                     data={users}
                     renderItem={renderItemHorOffer}
                     keyExtractor={(item, index) => {
-                        index;
+                        Math.random().toString(36).substr(2, 7);
                     }}
                     ListFooterComponent={renderLoader}
                     onEndReached={loadMoreItem}
@@ -318,9 +345,9 @@ const Fashion = ({navigation}) => {
                 />
             </View>
 
-            <View style={{flexDirection:'row',justifyContent:'space-between'}}>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                 <Text style={{ padding: 15, color: '#bebebe', fontWeight: 'bold' }}>Category</Text>
-                <TouchableOpacity  onPress={() => navigation.navigate('CatSeeAll')}>
+                <TouchableOpacity onPress={() => navigation.navigate('CatSeeAll')}>
                     <Text style={{ padding: 15, color: '#657eaf', fontWeight: 'bold' }}>See All</Text>
                 </TouchableOpacity>
             </View>
@@ -331,7 +358,7 @@ const Fashion = ({navigation}) => {
                     data={users}
                     renderItem={renderItemHorCat}
                     keyExtractor={(item, index) => {
-                        index;
+                        Math.random().toString(36).substr(2, 6);
                     }}
                     ListFooterComponent={renderLoader}
                     onEndReached={loadMoreItem}
@@ -339,10 +366,10 @@ const Fashion = ({navigation}) => {
                     showsHorizontalScrollIndicator={false}
                 />
             </View>
-            
-            <View style={{flexDirection:'row',justifyContent:'space-between'}}>
+
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                 <Text style={{ padding: 15, color: '#bebebe', fontWeight: 'bold' }}>Sets</Text>
-                <TouchableOpacity onPress={()=>{navigation.navigate('Sets')}}>
+                <TouchableOpacity onPress={() => { navigation.navigate('Sets') }}>
                     <Text style={{ padding: 15, color: '#657eaf', fontWeight: 'bold' }}>See All</Text>
                 </TouchableOpacity>
             </View>
@@ -353,7 +380,7 @@ const Fashion = ({navigation}) => {
                     data={users}
                     renderItem={renderItemHorSet}
                     keyExtractor={(item, index) => {
-                        index;
+                        Math.random().toString(36).substr(2, 5);
                     }}
                     ListFooterComponent={renderLoader}
                     onEndReached={loadMoreItem}
@@ -364,20 +391,29 @@ const Fashion = ({navigation}) => {
 
 
 
-            <FlatList
+            {/*             <FlatList
                 data={users}
                 renderItem={renderItem}
                 keyExtractor={(item, index) => {
-                    index.toString();
+                    Math.random().toString(36).substr(2, 4);
                 }}
                 ListFooterComponent={renderLoader}
                 onEndReached={loadMoreItem}
                 onEndReachedThreshold={0}
                 numColumns={2}
-            />
+            /> */}
         </ScrollView>
     );
 };
+
+
+const mapDispatchToProps=(dispatch)=>{
+    return{
+        addItemToCart:(product) =>dispatch({type:'ADD_TO_CART',payload:product})
+    }
+}
+
+
 
 const styles = StyleSheet.create({
     item: {
@@ -519,4 +555,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default Fashion;
+export default connect(null,mapDispatchToProps)(Fashion);

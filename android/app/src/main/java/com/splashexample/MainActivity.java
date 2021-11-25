@@ -3,6 +3,7 @@ package com.splashexample;
 import com.facebook.react.ReactActivity;
 import org.devio.rn.splashscreen.SplashScreen;
 import android.os.Bundle;
+import com.facebook.react.modules.i18nmanager.I18nUtil;
 
 
 public class MainActivity extends ReactActivity {
@@ -15,6 +16,9 @@ public class MainActivity extends ReactActivity {
   protected void onCreate(Bundle savedInstanceState) {
     SplashScreen.show(this);
     super.onCreate(savedInstanceState);
+    // in MainActivity.java
+    I18nUtil sharedI18nUtilInstance = I18nUtil.getInstance();
+    sharedI18nUtilInstance.allowRTL(getApplicationContext(), true);
   }
   @Override
   protected String getMainComponentName() {
