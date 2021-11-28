@@ -8,8 +8,9 @@ import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
 import { mapStyle } from '../constants/mapStyle';
 import Geolocation from "react-native-geolocation-service";
 import { check, request, PERMISSIONS, RESULTS } from "react-native-permissions"
+import { connect } from 'react-redux';
 
-const itemDetails = ({ route, navigation }) => {
+const itemDetails = ({ route, addItemToCart }) => {
     const { item } = route.params;
     const [location, setLocation] = useState(null)
 
@@ -39,6 +40,9 @@ const itemDetails = ({ route, navigation }) => {
         handleLocationPermission()
     }, [])
 
+    const getItem=(items)=>{
+        console.log('it',items)
+    }
     useEffect(() => { // 👈
         Geolocation.getCurrentPosition(
             position => {
@@ -132,8 +136,8 @@ const itemDetails = ({ route, navigation }) => {
                     <TouchableOpacity >
                         <AntDesign name="minus" type="AntDesign" size={15} style={styles.icon} />
                     </TouchableOpacity>
-                    <Text>1</Text>
-                    <TouchableOpacity>
+                    <Text>0</Text>
+                    <TouchableOpacity onPress={(item)=>addItemToCart(item)}>
                         <AntDesign name="plus" type="AntDesign" size={15} style={styles.icon} />
                     </TouchableOpacity>
                 </View>
@@ -144,6 +148,13 @@ const itemDetails = ({ route, navigation }) => {
         </>
     )
 }
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        addItemToCart: (product) => dispatch({ type: 'ADD_TO_CART', payload: product })
+    }
+}
+
 const styles = StyleSheet.create({
     Container: {
         width: '100%',
@@ -171,4 +182,4 @@ const styles = StyleSheet.create({
        /*  paddingRight: 20 */
     }
 })
-export default itemDetails
+export default connect(null,mapDispatchToProps)(itemDetails)

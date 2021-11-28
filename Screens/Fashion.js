@@ -24,7 +24,7 @@ import { connect } from 'react-redux';
 
 
 
-const Fashion = ({ navigation }) => {
+const Fashion = ({ navigation,addItemToCart }) => {
     const [users, setUsers] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [isLoading, setIsLoading] = useState(false);
@@ -109,9 +109,9 @@ const Fashion = ({ navigation }) => {
                         />
                     </TouchableHighlight>
                     <AntDesign name="hearto" type="AntDesign" size={20} style={styles.heart} />
-                    <TouchableHighlight style={styles.plus} onPress={() => selectItem(item)}>
+                    <TouchableOpacity style={styles.plus} onPress={()=>addItemToCart(item)}>
                         <AntDesign name="plus" size={20} color="#fff" style={{ paddingTop: 4, paddingLeft: 5 }} />
-                    </TouchableHighlight>
+                    </TouchableOpacity>
                 </View>
 
 
@@ -178,7 +178,7 @@ const Fashion = ({ navigation }) => {
                             color: '#fff'
                         }}>72</Text>
                     </View>
-                    <TouchableOpacity style={{
+                    <TouchableOpacity onPress={()=>addItemToCart(item)} style={{
                         position: "absolute",
                         bottom: 10,
                         right: 10,
@@ -215,10 +215,10 @@ const Fashion = ({ navigation }) => {
                         />
                     </TouchableHighlight>
                     <Icon name="heart" size={25} color="red" style={styles.heart} />
-                    <TouchableHighlight style={styles.plus} >
+                    <TouchableOpacity style={styles.plus} onPress={()=>addItemToCart(item)}>
                         <AntDesign name="plus" size={25} color="#fff" style={styles.icon} />
 
-                    </TouchableHighlight>
+                    </TouchableOpacity>
                 </View>
 
 
@@ -407,9 +407,9 @@ const Fashion = ({ navigation }) => {
 };
 
 
-const mapDispatchToProps=(dispatch)=>{
-    return{
-        addItemToCart:(product) =>dispatch({type:'ADD_TO_CART',payload:product})
+const mapDispatchToProps = (dispatch) => {
+    return {
+        addItemToCart: (product) => dispatch({ type: 'ADD_TO_CART', payload: product })
     }
 }
 

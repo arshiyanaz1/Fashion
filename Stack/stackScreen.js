@@ -12,6 +12,7 @@ import itemDetails from '../Screens/itemDetails';
 import CountriesScreen from '../Screens/CountriesScreen';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import LanguageScreen from '../Screens/Language';
+import CartScreen from '../Screens/CartScreen';
 
 
 const Stack = createNativeStackNavigator();
@@ -33,6 +34,7 @@ const StackScreen = () => {
           }}/>
 
         <Stack.Screen name="Login" component={LoginWithGoogle} />
+        <Stack.Screen name="Cart" component={CartScreen} />
         <Stack.Screen options={{ headerShown: false }} name="CatSeeAll" component={CategorySeeall} />
         <Stack.Screen options={{ headerShown: false }} name="SubCategory" component={SubCategory} />
         <Stack.Screen name="Sets" component={SetSub} />
