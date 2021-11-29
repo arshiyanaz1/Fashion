@@ -20,7 +20,7 @@ const Stack = createNativeStackNavigator();
 
 const StackScreen = () => {
     return (
-        <Stack.Navigator>
+        <Stack.Navigator>          
         <Stack.Screen name="Select Country" component={CountriesScreen} />
         <Stack.Screen name="Language" options={{       
             headerTitle:'Select Language'

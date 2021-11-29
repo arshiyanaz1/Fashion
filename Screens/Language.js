@@ -18,6 +18,7 @@ const LanguageScreen = ({navigation}) => {
 
     }
 
+   
 
     useEffect(()=>{
 
@@ -42,8 +43,8 @@ const LanguageScreen = ({navigation}) => {
                 )
             })}
 
-            <TouchableOpacity style={{backgroundColor:'blue',padding:5,borderRadius:5}} onPress={()=>navigation.navigate('Home')}>
-                <Text>Next</Text>
+            <TouchableOpacity style={{backgroundColor:'blue',padding:7,borderRadius:5,alignItems:'center',justifyContent:'center'}} onPress={()=>navigation.navigate('Home')}>
+                <Text style={{color:'#fff',alignItems:'center',fontSize:18,fontWeight:'bold'}}>Next</Text>
             </TouchableOpacity>
         </View>
     )

@@ -11,14 +11,19 @@ import {
     Button,
     ImageBackground,
     TouchableOpacity,
-    ScrollView
+    ScrollView,
+    Dimensions
 
 } from 'react-native';
 import axios from 'axios';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import AntDesign from 'react-native-vector-icons/AntDesign';
+import { connect } from 'react-redux';
 
-const SetSub = ({ navigation }) => {
+
+const windowWidth = Dimensions.get('window').width;
+const windowHeight = Dimensions.get('window').height;
+const SetSub = ({ navigation, cartItems,total }) => {
 
     const [users, setUsers] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
@@ -33,7 +38,7 @@ const SetSub = ({ navigation }) => {
                 //setUsers(res.data.results);
                 setUsers([...users, ...res.data.results]);
                 setIsLoading(false);
-                console.log(res)
+                //console.log(res)
             });
     };
 
@@ -49,8 +54,8 @@ const SetSub = ({ navigation }) => {
         setCurrentPage(currentPage + 1);
     };
 
-    const getItem = (item) =>{
-        console.log('item',item)
+    const getItem = (item) => {
+        // console.log('item',item)
     }
 
     useEffect(() => {
@@ -59,9 +64,10 @@ const SetSub = ({ navigation }) => {
 
     const renderItem = ({ item }) => {
         return (
-            <TouchableOpacity style={styles.itemWrapperStyle} onPress={()=>{getItem(item), navigation.navigate('Item',{item})}}>
+
+            <TouchableOpacity style={styles.itemWrapperStyle} onPress={() => { getItem(item), navigation.navigate('Item', { item }) }}>
                 <View>
-                    <Image 
+                    <Image
                         style={styles.itemImageStyle}
                         source={{ uri: item.picture.large }}
                     />
@@ -93,6 +99,14 @@ const SetSub = ({ navigation }) => {
 
     return (
         <View>
+            {cartItems.length > 0 &&
+                <TouchableHighlight underlayColor="#2196f3" onPress={() => navigation.navigate('Cart')} style={{ flex: 1, flexDirection: 'row', position: 'absolute', height: 30, left: (windowWidth / 2) - 183, width: '90%', borderRadius: 4, backgroundColor: '#E7F3FF', alignself: 'center',/*  top: windowHeight - 180 */top: windowHeight - 180, alignItems: 'center', zIndex: 2000, justifyContent: 'space-around' }}>
+                    <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 10 }}>
+                        <Text style={{ borderColor: '#bebebe', borderWidth: 1, paddingHorizontal: 3, borderRadius: 25, textAlign: 'center', color: '#393b3d' }}>{cartItems.length} </Text>
+                        <Text style={{ alignSelf: 'center', color: '#393b3d', paddingHorizontal: 10 }}>Total: {total} </Text>
+                    </View>
+                </TouchableHighlight>
+            }
             <View style={styles.Container}>
                 <Image resizeMode={'cover'}
                     style={{ width: '100%', height: 110 }}
@@ -196,4 +210,10 @@ const styles = StyleSheet.create({
 
 })
 
-export default SetSub
+const mapStateToProps = (state) => {
+    return {
+        cartItems: state.cartItems,
+        total:state.totalPrice
+    }
+}
+export default connect(mapStateToProps)(SetSub)

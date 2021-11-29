@@ -2,10 +2,9 @@ import React, { useEffect, useState } from 'react'
 import { View,Alert, Text, StyleSheet, TouchableHighlight, Image, TouchableOpacity, ScrollView, TextInput } from 'react-native'
 import { connect } from 'react-redux'
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import { is } from 'immer/dist/internal';
 
 
-const CartScreen = ({ cartItems,addItemToCart,removeItem ,total,}) => {
+const CartScreen = ({ cartItems,addItemToCart,removeItem ,total,qty}) => {
     const [text, onChangeText] = React.useState("Useless Text");
     const [Textinput, onChangeTextinput] = React.useState();
     const [price,setPrice]=useState(0)
@@ -56,7 +55,7 @@ useEffect(()=>{
                                         <TouchableOpacity onPress={()=>removeItem(item)}>
                                             <AntDesign name="minus" type="AntDesign" size={15} style={styles.icon} />
                                         </TouchableOpacity>
-                                        <Text>1</Text>
+                                        <Text>{qty}</Text>
                                         <TouchableOpacity onPress={()=>addItemToCart(item)}>
                                             <AntDesign name="plus" type="AntDesign" size={15} style={styles.icon} />
                                         </TouchableOpacity>
@@ -126,7 +125,7 @@ const mapStateToProps = (state) => {
     return {
         cartItems: state.cartItems,
         total:state.totalPrice,
-       /*  qty:state.itemQty */
+        qty:state.itemQty
     }
 }
 

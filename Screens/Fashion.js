@@ -12,10 +12,9 @@ import {
     ImageBackground,
     TouchableOpacity,
     ScrollView,
-    Alert
+    Dimensions
 } from 'react-native';
 import axios from 'axios';
-import { Dimensions } from 'react-native'
 import Icon from 'react-native-vector-icons/FontAwesome';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -23,8 +22,10 @@ import firebase from 'react-native-firebase';
 import { connect } from 'react-redux';
 
 
+const windowWidth = Dimensions.get('window').width;
+const windowHeight = Dimensions.get('window').height;
 
-const Fashion = ({ navigation,addItemToCart }) => {
+const Fashion = ({ navigation, addItemToCart, cartItems,total }) => {
     const [users, setUsers] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [isLoading, setIsLoading] = useState(false);
@@ -45,7 +46,7 @@ const Fashion = ({ navigation,addItemToCart }) => {
     };
 
     const selectItem = (item) => {
-        setProduct([...product,item])
+        setProduct([...product, item])
         /*   Alert.alert('hh') */
 
         console.log('selected item', product)
@@ -109,7 +110,7 @@ const Fashion = ({ navigation,addItemToCart }) => {
                         />
                     </TouchableHighlight>
                     <AntDesign name="hearto" type="AntDesign" size={20} style={styles.heart} />
-                    <TouchableOpacity style={styles.plus} onPress={()=>addItemToCart(item)}>
+                    <TouchableOpacity style={styles.plus} onPress={() => addItemToCart(item)}>
                         <AntDesign name="plus" size={20} color="#fff" style={{ paddingTop: 4, paddingLeft: 5 }} />
                     </TouchableOpacity>
                 </View>
@@ -178,7 +179,7 @@ const Fashion = ({ navigation,addItemToCart }) => {
                             color: '#fff'
                         }}>72</Text>
                     </View>
-                    <TouchableOpacity onPress={()=>addItemToCart(item)} style={{
+                    <TouchableOpacity onPress={() => addItemToCart(item)} style={{
                         position: "absolute",
                         bottom: 10,
                         right: 10,
@@ -208,14 +209,14 @@ const Fashion = ({ navigation,addItemToCart }) => {
         return (
             <View style={styles.item}>
                 <View style={styles.imageCont} >
-                    <TouchableHighlight onPress={()=>{navigation.navigate('Item',{item})}}>
+                    <TouchableHighlight onPress={() => { navigation.navigate('Item', { item }) }}>
                         <Image
                             style={styles.itemPhoto}
                             source={{ uri: item.picture.large }}
                         />
                     </TouchableHighlight>
                     <Icon name="heart" size={25} color="red" style={styles.heart} />
-                    <TouchableOpacity style={styles.plus} onPress={()=>addItemToCart(item)}>
+                    <TouchableOpacity style={styles.plus} onPress={() => addItemToCart(item)}>
                         <AntDesign name="plus" size={25} color="#fff" style={styles.icon} />
 
                     </TouchableOpacity>
@@ -277,7 +278,7 @@ const Fashion = ({ navigation,addItemToCart }) => {
     };
 
 
-  
+
     const renderLoader = () => {
         return isLoading ? (
             <View style={styles.loaderStyle}>
@@ -293,105 +294,117 @@ const Fashion = ({ navigation,addItemToCart }) => {
     useEffect(() => {
         getUsers();
         _retrieveData()
-       // selectItem();
+        // selectItem();
     }, [currentPage]);
 
     return (
-        <ScrollView>
-            <StatusBar backgroundColor="#000" />
+        <View>
+            {cartItems.length > 0 &&
+                <TouchableHighlight underlayColor="#2196f3" onPress={() => navigation.navigate('Cart')} style={{ flex: 1, flexDirection: 'row', position: 'absolute', height: 30, left: (windowWidth / 2) - 183, width: '90%', borderRadius: 4, backgroundColor: '#E7F3FF', alignself: 'center',/*  top: windowHeight - 180 */top: windowHeight - 180, alignItems: 'center', zIndex: 2000, justifyContent: 'space-around' }}>
+                    <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',paddingHorizontal:10 }}>
+                        <Text style={{ borderColor: '#bebebe', borderWidth: 1, paddingHorizontal: 3, borderRadius: 25, textAlign: 'center', color: '#393b3d' }}>{cartItems.length}  </Text>
+                        <Text style={{ alignSelf: 'center', color: '#393b3d', paddingHorizontal: 10 }}>Total: {total} </Text>
+                    </View>
+                </TouchableHighlight>
+            }
 
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                <Text style={{ padding: 15, color: '#bebebe', fontWeight: 'bold' }}>Shoes</Text>
-                <TouchableOpacity onPress={() => { navigation.navigate('Sets') }}>
-                    <Text style={{ padding: 15, color: '#657eaf', fontWeight: 'bold' }}>See All</Text>
-                </TouchableOpacity>
-            </View>
-
-
-            <View>
-                <FlatList
-                    horizontal={true}
-                    data={users}
-                    renderItem={renderItemHorShoes}
-                    keyExtractor={(item, index) => {
-                        Math.random().toString(36).substr(2, 8);
-                    }}
-                    ListFooterComponent={renderLoader}
-                    onEndReached={loadMoreItem}
-                    onEndReachedThreshold={0}
-                    showsHorizontalScrollIndicator={false}
-                />
-            </View>
-
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                <Text style={{ padding: 15, color: '#bebebe', fontWeight: 'bold' }}>Offers</Text>
-                <TouchableOpacity>
-                    <Text style={{ padding: 15, color: '#657eaf', fontWeight: 'bold' }}>See All</Text>
-                </TouchableOpacity>
-            </View>
-
-            <View>
-                <FlatList
-                    horizontal={true}
-                    data={users}
-                    renderItem={renderItemHorOffer}
-                    keyExtractor={(item, index) => {
-                        Math.random().toString(36).substr(2, 7);
-                    }}
-                    ListFooterComponent={renderLoader}
-                    onEndReached={loadMoreItem}
-                    onEndReachedThreshold={0}
-                    showsHorizontalScrollIndicator={false}
-                />
-            </View>
-
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                <Text style={{ padding: 15, color: '#bebebe', fontWeight: 'bold' }}>Category</Text>
-                <TouchableOpacity onPress={() => navigation.navigate('CatSeeAll')}>
-                    <Text style={{ padding: 15, color: '#657eaf', fontWeight: 'bold' }}>See All</Text>
-                </TouchableOpacity>
-            </View>
-
-            <View>
-                <FlatList
-                    horizontal={true}
-                    data={users}
-                    renderItem={renderItemHorCat}
-                    keyExtractor={(item, index) => {
-                        Math.random().toString(36).substr(2, 6);
-                    }}
-                    ListFooterComponent={renderLoader}
-                    onEndReached={loadMoreItem}
-                    onEndReachedThreshold={0}
-                    showsHorizontalScrollIndicator={false}
-                />
-            </View>
-
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                <Text style={{ padding: 15, color: '#bebebe', fontWeight: 'bold' }}>Sets</Text>
-                <TouchableOpacity onPress={() => { navigation.navigate('Sets') }}>
-                    <Text style={{ padding: 15, color: '#657eaf', fontWeight: 'bold' }}>See All</Text>
-                </TouchableOpacity>
-            </View>
-
-            <View>
-                <FlatList
-                    horizontal={true}
-                    data={users}
-                    renderItem={renderItemHorSet}
-                    keyExtractor={(item, index) => {
-                        Math.random().toString(36).substr(2, 5);
-                    }}
-                    ListFooterComponent={renderLoader}
-                    onEndReached={loadMoreItem}
-                    onEndReachedThreshold={0}
-                    showsHorizontalScrollIndicator={false}
-                />
-            </View>
+            <ScrollView style={{ dicplay: 'flex' }}>
+                <StatusBar backgroundColor="#000" />
 
 
 
-            {/*             <FlatList
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                    <Text style={{ padding: 15, color: '#bebebe', fontWeight: 'bold' }}>Shoes</Text>
+                    <TouchableOpacity onPress={() => { navigation.navigate('Sets') }}>
+                        <Text style={{ padding: 15, color: '#657eaf', fontWeight: 'bold' }}>See All</Text>
+                    </TouchableOpacity>
+                </View>
+
+
+                <View>
+                    <FlatList
+                        horizontal={true}
+                        data={users}
+                        renderItem={renderItemHorShoes}
+                        keyExtractor={(item, index) => {
+                            Math.random().toString(36).substr(2, 8);
+                        }}
+                        ListFooterComponent={renderLoader}
+                        onEndReached={loadMoreItem}
+                        onEndReachedThreshold={0}
+                        showsHorizontalScrollIndicator={false}
+                    />
+                </View>
+
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                    <Text style={{ padding: 15, color: '#bebebe', fontWeight: 'bold' }}>Offers</Text>
+                    <TouchableOpacity>
+                        <Text style={{ padding: 15, color: '#657eaf', fontWeight: 'bold' }}>See All</Text>
+                    </TouchableOpacity>
+                </View>
+
+                <View>
+                    <FlatList
+                        horizontal={true}
+                        data={users}
+                        renderItem={renderItemHorOffer}
+                        keyExtractor={(item, index) => {
+                            Math.random().toString(36).substr(2, 7);
+                        }}
+                        ListFooterComponent={renderLoader}
+                        onEndReached={loadMoreItem}
+                        onEndReachedThreshold={0}
+                        showsHorizontalScrollIndicator={false}
+                    />
+                </View>
+
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                    <Text style={{ padding: 15, color: '#bebebe', fontWeight: 'bold' }}>Category</Text>
+                    <TouchableOpacity onPress={() => navigation.navigate('CatSeeAll')}>
+                        <Text style={{ padding: 15, color: '#657eaf', fontWeight: 'bold' }}>See All</Text>
+                    </TouchableOpacity>
+                </View>
+
+                <View>
+                    <FlatList
+                        horizontal={true}
+                        data={users}
+                        renderItem={renderItemHorCat}
+                        keyExtractor={(item, index) => {
+                            Math.random().toString(36).substr(2, 6);
+                        }}
+                        ListFooterComponent={renderLoader}
+                        onEndReached={loadMoreItem}
+                        onEndReachedThreshold={0}
+                        showsHorizontalScrollIndicator={false}
+                    />
+                </View>
+
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                    <Text style={{ padding: 15, color: '#bebebe', fontWeight: 'bold' }}>Sets</Text>
+                    <TouchableOpacity onPress={() => { navigation.navigate('Sets') }}>
+                        <Text style={{ padding: 15, color: '#657eaf', fontWeight: 'bold' }}>See All</Text>
+                    </TouchableOpacity>
+                </View>
+
+                <View>
+                    <FlatList
+                        horizontal={true}
+                        data={users}
+                        renderItem={renderItemHorSet}
+                        keyExtractor={(item, index) => {
+                            Math.random().toString(36).substr(2, 5);
+                        }}
+                        ListFooterComponent={renderLoader}
+                        onEndReached={loadMoreItem}
+                        onEndReachedThreshold={0}
+                        showsHorizontalScrollIndicator={false}
+                    />
+                </View>
+
+
+
+                {/*             <FlatList
                 data={users}
                 renderItem={renderItem}
                 keyExtractor={(item, index) => {
@@ -402,7 +415,8 @@ const Fashion = ({ navigation,addItemToCart }) => {
                 onEndReachedThreshold={0}
                 numColumns={2}
             /> */}
-        </ScrollView>
+            </ScrollView>
+        </View>
     );
 };
 
@@ -413,7 +427,12 @@ const mapDispatchToProps = (dispatch) => {
     }
 }
 
-
+const mapStateToProps = (state) => {
+    return {
+        cartItems: state.cartItems,
+        total:state.totalPrice
+    }
+}
 
 const styles = StyleSheet.create({
     item: {
@@ -555,4 +574,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default connect(null,mapDispatchToProps)(Fashion);
+export default connect(mapStateToProps, mapDispatchToProps)(Fashion);
