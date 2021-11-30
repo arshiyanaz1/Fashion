@@ -41,7 +41,7 @@ const Fashion = ({ navigation, addItemToCart, cartItems,total }) => {
             .then(res => {
                 setUsers([...users, ...res.data.results]);
                 setIsLoading(false);
-                /* console.log(res) */
+              //  console.log(res)    
             });
     };
 
@@ -52,6 +52,17 @@ const Fashion = ({ navigation, addItemToCart, cartItems,total }) => {
         console.log('selected item', product)
 
     }
+    const renderLoader = () => {
+        return isLoading ? (
+            <View style={styles.loaderStyle}>
+                <ActivityIndicator size="large" color="#aaa" />
+            </View>
+        ) : null;
+    };
+
+    const loadMoreItem = () => {
+        setCurrentPage(currentPage + 1);
+    };
     _retrieveData = async () => {
         try {
             const value = await AsyncStorage.getItem('selectedCountry');
@@ -279,17 +290,7 @@ const Fashion = ({ navigation, addItemToCart, cartItems,total }) => {
 
 
 
-    const renderLoader = () => {
-        return isLoading ? (
-            <View style={styles.loaderStyle}>
-                <ActivityIndicator size="large" color="#aaa" />
-            </View>
-        ) : null;
-    };
-
-    const loadMoreItem = () => {
-        setCurrentPage(currentPage + 1);
-    };
+ 
 
     useEffect(() => {
         getUsers();
@@ -409,7 +410,7 @@ const Fashion = ({ navigation, addItemToCart, cartItems,total }) => {
                 renderItem={renderItem}
                 keyExtractor={(item, index) => {
                     Math.random().toString(36).substr(2, 4);
-                }}
+                }}  
                 ListFooterComponent={renderLoader}
                 onEndReached={loadMoreItem}
                 onEndReachedThreshold={0}

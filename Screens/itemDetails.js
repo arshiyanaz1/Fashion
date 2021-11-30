@@ -1,22 +1,23 @@
 import React, { useEffect, useState } from 'react'
-import { View, Text, Image, StyleSheet, ScrollView,TouchableOpacity,Dimensions,TouchableHighlight } from 'react-native'
+import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity, Dimensions, TouchableHighlight } from 'react-native'
 import { StackNavigator } from 'react-navigation';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
 import { mapStyle } from '../constants/mapStyle';
 import Geolocation from "react-native-geolocation-service";
 import { check, request, PERMISSIONS, RESULTS } from "react-native-permissions"
+import Lightbox from 'react-native-lightbox';
 import { connect } from 'react-redux';
 
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 
-const itemDetails = ({ navigation,route, addItemToCart,cartItems,removeItem ,total}) => {
+const itemDetails = ({ navigation, route, addItemToCart, cartItems, removeItem, total, navigator }) => {
     const { item } = route.params;
     const [location, setLocation] = useState(null)
     const [Item, setItem] = useState(item)
-    
+
 
     const windowWidth = Dimensions.get('window').width;
     const windowHeight = Dimensions.get('window').height;
@@ -44,15 +45,15 @@ const itemDetails = ({ navigation,route, addItemToCart,cartItems,removeItem ,tot
         handleLocationPermission()
     }, [])
 
-    const getItem=(items)=>{
-        console.log('it',items)
+    const getItem = (items) => {
+        console.log('it', items)
     }
     useEffect(() => { // 👈
         Geolocation.getCurrentPosition(
             position => {
                 const { latitude, longitude } = position.coords
                 setLocation({ latitude, longitude })
-               // console.log('position', position)
+                // console.log('position', position)
             },
             error => {
                 console.log(error.code, error.message)
@@ -60,27 +61,30 @@ const itemDetails = ({ navigation,route, addItemToCart,cartItems,removeItem ,tot
             { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
 
         )
-     /*    if (location) {
-            console.log('location', location)
-        } */
+        /*    if (location) {
+               console.log('location', location)
+           } */
     }, [])
+
 
     return (
         <>
-              {cartItems.length > 0 &&
+            {cartItems.length > 0 &&
                 <TouchableHighlight underlayColor="#2196f3" onPress={() => navigation.navigate('Cart')} style={{ flex: 1, flexDirection: 'row', position: 'absolute', height: 30, left: (windowWidth / 2) - 183, width: '90%', borderRadius: 4, backgroundColor: '#E7F3FF', alignself: 'center',/*  top: windowHeight - 180 */top: windowHeight - 180, alignItems: 'center', zIndex: 2000, justifyContent: 'space-around' }}>
-                <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',paddingHorizontal:10 }}>
-                    <Text style={{ borderColor: '#bebebe', borderWidth: 1, /* paddingHorizontal: 3, */ borderRadius: 25, textAlign: 'center', color: '#393b3d' }}>{cartItems.length} </Text>
-                    <Text style={{ alignSelf: 'center', color: '#393b3d', paddingHorizontal: 10 }}>Total: {total}  </Text>
-                </View>
-            </TouchableHighlight>
+                    <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 10 }}>
+                        <Text style={{ borderColor: '#bebebe', borderWidth: 1, paddingHorizontal: 3, borderRadius: 25, textAlign: 'center', color: '#393b3d' }}>{cartItems.length}  </Text>
+                        <Text style={{ alignSelf: 'center', color: '#393b3d', paddingHorizontal: 10 }}>Total: {total} </Text>
+                    </View>
+                </TouchableHighlight>
             }
             <ScrollView style={{ flex: 1, height: '100%', }}>
                 <View >
-                    <Image
-                        style={{ width: '100%', height: 210 }} 
-                        source={{ uri: item.picture.large }}>
-                    </Image>
+                    <Lightbox useNativeDriver='true' navigator={navigator}>
+                        <Image
+                            style={{ width: '100%', height: 210 }}
+                            source={{ uri: item.picture.large }}>
+                        </Image>
+                    </Lightbox>
                     <View style={styles.price}>
                         <Text style={styles.priceMark} >
                             {item.dob.age}
@@ -141,20 +145,21 @@ const itemDetails = ({ navigation,route, addItemToCart,cartItems,removeItem ,tot
             </ScrollView>
 
 
-            <View style={{flexDirection:'row',width:'100%',paddingHorizontal:10,alignItems:'center',justifyContent:'space-between',borderTopWidth:1,borderTopColor:'gray'}}>
+            <View style={{ flexDirection: 'row', width: '100%', paddingHorizontal: 10, alignItems: 'center', justifyContent: 'space-between', borderTopWidth: 1, borderTopColor: 'gray' }}>
                 <View style={{
-                    height: 50,width:'40%',
-                    flexDirection:'row',alignItems:'center',justifyContent:'space-evenly',}}>
-                    <TouchableOpacity onPress={()=>removeItem(Item)}>
+                    height: 50, width: '40%',
+                    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly',
+                }}>
+                    <TouchableOpacity onPress={() => removeItem(Item)}>
                         <AntDesign name="minus" type="AntDesign" size={15} style={styles.icon} />
                     </TouchableOpacity>
                     <Text>0</Text>
-                    <TouchableOpacity onPress={()=>addItemToCart(Item)}>
+                    <TouchableOpacity onPress={() => addItemToCart(Item)}>
                         <AntDesign name="plus" type="AntDesign" size={15} style={styles.icon} />
                     </TouchableOpacity>
                 </View>
-                <TouchableOpacity onPress={()=>addItemToCart(Item)} style={{width:'100%',backgroundColor:'#e7f3ff',padding:10,borderRadius:5}}>
-                    <Text style={{alignSelf:'flex-start',color:'#2966bd',fontWeight:'bold',fontSize:16}}>Start add items to cart</Text>
+                <TouchableOpacity onPress={() => addItemToCart(Item)} style={{ width: '100%', backgroundColor: '#e7f3ff', padding: 10, borderRadius: 5 }}>
+                    <Text style={{ alignSelf: 'flex-start', color: '#2966bd', fontWeight: 'bold', fontSize: 16 }}>Start add items to cart</Text>
                 </TouchableOpacity>
             </View>
         </>
@@ -164,7 +169,7 @@ const itemDetails = ({ navigation,route, addItemToCart,cartItems,removeItem ,tot
 const mapDispatchToProps = (dispatch) => {
     return {
         addItemToCart: (product) => dispatch({ type: 'ADD_TO_CART', payload: product }),
-        removeItem:(product) =>dispatch ({type:'REMOVE_FROM_CART',payload:product})
+        removeItem: (product) => dispatch({ type: 'REMOVE_FROM_CART', payload: product })
 
     }
 }
@@ -172,7 +177,7 @@ const mapDispatchToProps = (dispatch) => {
 const mapStateToProps = (state) => {
     return {
         cartItems: state.cartItems,
-        total:state.totalPrice
+        total: state.totalPrice
     }
 }
 const styles = StyleSheet.create({
@@ -199,7 +204,7 @@ const styles = StyleSheet.create({
         color: 'white'
     },
     icon: {
-       /*  paddingRight: 20 */
+        /*  paddingRight: 20 */
     }
 })
-export default connect(mapStateToProps,mapDispatchToProps)(itemDetails)
+export default connect(mapStateToProps, mapDispatchToProps)(itemDetails)

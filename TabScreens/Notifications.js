@@ -1,12 +1,25 @@
 import React from 'react'
-import { View, Text } from 'react-native'
+import { View, Text,Button } from 'react-native'
+import { connect } from 'react-redux'
+import * as cartitemActions from '../reduxConfig/actions/cartitemAction'
 
-const Notifications = () => {
+
+const Notifications = ({clearcart}) => {
     return (
         <View>
-            <Text>Notification</Text>
+                 <Button
+                    title="Clear cart"
+                    type="clear"
+                    style={{ marginRight: 10 }}
+                    onPress={() => clearcart()}
+                />
         </View>
     )
 }
 
-export default Notifications
+const mapDispatchToProps=(dispatch)=>{
+    return{
+        clearcart:()=>dispatch(cartitemActions.clearCart())
+    }
+}
+export default connect(null,mapDispatchToProps)(Notifications);

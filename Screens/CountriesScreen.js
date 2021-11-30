@@ -9,58 +9,68 @@ import {
     StatusBar,
     AsyncStorageStatic,
     ScrollView,
-    TouchableOpacity} from 'react-native'
-import { Countries } from '../API/Countries'
+    TouchableOpacity
+} from 'react-native'
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as cartitemActions from '../reduxConfig/actions/cartitemAction'
+import { connect } from 'react-redux';
 
 
 
-const CountriesScreen = ({ navigation }) => {
+const CountriesScreen = ({ navigation, loadCountry, country }) => {
 
-    const _selectCountry= async (data)=>{
+    const _selectCountry = async (data) => {
         try {
+            console.log('selected_country',data.name)
             await AsyncStorage.setItem('selectedCountry', JSON.stringify(data.name));
-          } catch (err) {
+        } catch (err) {
             console.log(err);
-          }
+        }
     }
-    useEffect(()=>{
-        /* _storeData() */
-    },[])
+    useEffect(() => {
+      /*   if(country){
+            console.log('selected',country)
+        } */
+    }, [])
 
-    
+    const renderItem = ({ item,key }) => {
+        return (
+            <TouchableOpacity style={styles.itemWrapperStyle} onPress={() => _selectCountry(item)} key={key}>
+                <Text style={styles.itemImageStyle}>{item.iso}</Text>
+                <View style={styles.contentWrapperStyle}>
+                    <Text
+                        style={
+                            styles.txtNameStyle
+                        }>{item.name}</Text>
+                    <Text style={styles.txtEmailStyle}></Text>
+                </View>
+            </TouchableOpacity>
+        )
+    }
     return (
-        <View>
-            <ScrollView style={{ /* flex: 1, */ height: '80%',marginBottom:10}}>
-                {Countries.map((data, index) => {
-                    return (
-                        <TouchableOpacity style={styles.itemWrapperStyle} onPress={()=>_selectCountry(data)} key={Math.random().toString(36).substr(2, 9)}>
-                            {/*   <Image
-                        style={styles.itemImageStyle}
-                        source={{uri: item.picture.large}}
-                      /> */}
-                            <Text style={styles.itemImageStyle}>{data.code}</Text>
-                            <View style={styles.contentWrapperStyle}>
-                                <Text
-                                    style={
-                                        styles.txtNameStyle
-                                    }>{data.name}</Text>
-                                <Text style={styles.txtEmailStyle}></Text>
-                            </View>
-                        </TouchableOpacity>
-                    )
-                })}
-            </ScrollView>
-            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly' }}>
+        <View style={{ flex: 1 }}>
+            <View>
+                <FlatList
+                    data={country}
+                    renderItem={renderItem}
+                    keyExtractor={(item, id) => {
+                        id;
+                    }}
+                    onEndReachedThreshold={0}
+                />
+            </View>
+
+            <View style={{ width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly', position: 'absolute', bottom: 0, top: '93%', }}>
                 <Button
                     title="Next"
                     type="clear"
+                    style={{ marginRight: 10 }}
                     onPress={() => navigation.navigate('Language')}
                 />
                 <Button
                     title="Cancel"
                     type="clear"
-                    onPress={() => navigation.navigate('Home')}
+                    onPress={() => loadCountry()}
                 />
             </View>
 
@@ -68,6 +78,16 @@ const CountriesScreen = ({ navigation }) => {
     )
 }
 
+const mapStateToProps = (state) => {
+    return {
+        country: state.country[0].data
+    }
+}
+const mapDispatchToProps = (dispatch) => {
+    return {
+        loadCountry: () => dispatch(cartitemActions.loadCountries())
+    }
+}
 const styles = StyleSheet.create({
     list: {
         width: '100%',
@@ -103,4 +123,4 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
 });
-export default CountriesScreen
+export default connect(mapStateToProps, mapDispatchToProps)(CountriesScreen)

@@ -6,7 +6,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react'
 import StackScreen from './Stack/stackScreen';
-import reduxStore from './store/index';
+import reduxStore from './reduxConfig/store/index';
 import './i18n/index'
 
 const windowWidth = Dimensions.get('window').width;
