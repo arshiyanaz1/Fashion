@@ -14,6 +14,8 @@ import {
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as cartitemActions from '../reduxConfig/actions/cartitemAction'
 import { connect } from 'react-redux';
+import PushNotification from "react-native-push-notification";
+
 
 
 
@@ -31,7 +33,17 @@ const CountriesScreen = ({ navigation, loadCountry, country }) => {
       /*   if(country){
             console.log('selected',country)
         } */
+        createChannels()
     }, [])
+
+    const createChannels = () => {
+        PushNotification.createChannel(
+            {
+                channelId: "test-channel",
+                channelName: "Test Channel",
+            }
+        )
+    }
 
     const renderItem = ({ item,key }) => {
         return (

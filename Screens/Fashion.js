@@ -20,20 +20,35 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import firebase from 'react-native-firebase';
 import { connect } from 'react-redux';
+import PushNotification from "react-native-push-notification";
 
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 
-const Fashion = ({ navigation, addItemToCart, cartItems,total }) => {
+const Fashion = ({ navigation, addItemToCart, cartItems, total }) => {
     const [users, setUsers] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [isLoading, setIsLoading] = useState(false);
     const [country, setCountry] = useState('');
     const [product, setProduct] = useState([]);
 
+    useEffect(() => {
+        getUsers();
+        _retrieveData()
+        // selectItem();
+    }, [currentPage]);
 
+    const handleNotifications = ()=>{
+        PushNotification.localNotification({
+            channelId: "test-channel",
+            title:'you clicked on offers',
+            message:'hi'
 
+        }) 
+    }
+
+ 
     const getUsers = () => {
         setIsLoading(true);
         axios
@@ -41,7 +56,7 @@ const Fashion = ({ navigation, addItemToCart, cartItems,total }) => {
             .then(res => {
                 setUsers([...users, ...res.data.results]);
                 setIsLoading(false);
-              //  console.log(res)    
+                //  console.log(res)    
             });
     };
 
@@ -290,19 +305,15 @@ const Fashion = ({ navigation, addItemToCart, cartItems,total }) => {
 
 
 
- 
 
-    useEffect(() => {
-        getUsers();
-        _retrieveData()
-        // selectItem();
-    }, [currentPage]);
+
+
 
     return (
         <View>
             {cartItems.length > 0 &&
                 <TouchableHighlight underlayColor="#2196f3" onPress={() => navigation.navigate('Cart')} style={{ flex: 1, flexDirection: 'row', position: 'absolute', height: 30, left: (windowWidth / 2) - 183, width: '90%', borderRadius: 4, backgroundColor: '#E7F3FF', alignself: 'center',/*  top: windowHeight - 180 */top: windowHeight - 180, alignItems: 'center', zIndex: 2000, justifyContent: 'space-around' }}>
-                    <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',paddingHorizontal:10 }}>
+                    <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 10 }}>
                         <Text style={{ borderColor: '#bebebe', borderWidth: 1, paddingHorizontal: 3, borderRadius: 25, textAlign: 'center', color: '#393b3d' }}>{cartItems.length}  </Text>
                         <Text style={{ alignSelf: 'center', color: '#393b3d', paddingHorizontal: 10 }}>Total: {total} </Text>
                     </View>
@@ -339,7 +350,7 @@ const Fashion = ({ navigation, addItemToCart, cartItems,total }) => {
 
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                     <Text style={{ padding: 15, color: '#bebebe', fontWeight: 'bold' }}>Offers</Text>
-                    <TouchableOpacity>
+                    <TouchableOpacity onPress={()=>handleNotifications()}>
                         <Text style={{ padding: 15, color: '#657eaf', fontWeight: 'bold' }}>See All</Text>
                     </TouchableOpacity>
                 </View>
@@ -431,7 +442,7 @@ const mapDispatchToProps = (dispatch) => {
 const mapStateToProps = (state) => {
     return {
         cartItems: state.cartItems,
-        total:state.totalPrice
+        total: state.totalPrice
     }
 }
 
